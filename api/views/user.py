@@ -5,6 +5,7 @@ from api.serializers.user import CustomerSerializer
 from user.models import Customer
 
 class RegisterUserAPIView(APIView):
+    # permission_classes = [AllowAny]
     def post(self, request):
         serializer = CustomerSerializer(data=request.data)
         if serializer.is_valid():
