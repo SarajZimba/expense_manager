@@ -41,10 +41,10 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 ]
 
-CUSTOM_APPS = ["user", "api", "accounting"]
+CUSTOM_APPS = ["user", "api", "accounting", "notification"]
 
 THIRD_PARTY_APPS = ["rest_framework" , "rest_framework_simplejwt",
-    "corsheaders",]
+    "corsheaders", "channels"]
 
 INSTALLED_APPS += CUSTOM_APPS + THIRD_PARTY_APPS
 
@@ -66,7 +66,7 @@ ROOT_URLCONF = 'root.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -80,6 +80,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'root.wsgi.application'
+ASGI_APPLICATION = 'root.asgi.application'
 
 
 # Database
@@ -141,13 +142,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Django REST Framework settings
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        # 'rest_framework.authentication.SessionAuthentication',  # For browsable API
-        # 'rest_framework.authentication.BasicAuthentication',    # For API clients
-        # 'rest_framework_simplejwt.authentication.JWTAuthentication',
-        'user.authentication.CustomJWTAuthentication',
+        'rest_framework.authentication.SessionAuthentication',  # For browsable API
+        'rest_framework.authentication.BasicAuthentication',    # For API clients
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        # 'user.authentication.CustomJWTAuthentication',
     ),
     'DEFAULT_PERMISSION_CLASSES': (   
-        'rest_framework.permissions.IsAuthenticated',  # Restrict access to authenticated users
+        # 'rest_framework.permissions.IsAuthenticated',  # Restrict access to authenticated users
     ),
 }
 
@@ -183,3 +184,15 @@ AUTHENTICATION_BACKENDS = [
 #     'AUTH_TOKEN_CLASSES': ('rest_framework_simplejwt.tokens.AccessToken',),
 #     'TOKEN_TYPE_CLAIM': 'token_type',
 # }
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+CHANNEL_LAYERS = {
+    'default': {
+       'BACKEND': 'channels_redis.core.RedisChannelLayer',
+       'CONFIG': {
+           "hosts": [('127.0.0.1', 6379)]
+       },
+
+    },
+}

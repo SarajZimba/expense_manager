@@ -1,3 +1,63 @@
+from django.http import HttpResponseRedirect
+from django.urls import reverse, reverse_lazy
 from django.shortcuts import render
+from django.views.generic import View, UpdateView, DeleteView
+from .models import Expense
+from django.db.models import Sum
+from .forms import ExpenseForm
 
-# Create your views here.
+class ExpenseFormView(View):
+    template_name = 'expense/expense_form.html'
+
+    def get(self, request, *args, **kwargs):
+        return render(request, self.template_name)
+
+    def post(self, request, *args, **kwargs):
+        titles = request.POST.getlist('title[]')
+        amounts = request.POST.getlist('amount[]')
+        dates = request.POST.getlist('date[]')
+        notes = request.POST.getlist('note[]')
+
+        # Iterate through the submitted data to create Expense instances
+        for title, amount, date, note in zip(titles, amounts, dates,notes):
+            Expense.objects.create(title=title, amount=amount, date=date, notes=note)
+
+        # Redirect to a success page or render a success message
+        return HttpResponseRedirect(reverse('expense-list'))  # Replace 'success_page' with your actual URL name
+    
+class ExpenseList(View):
+    template_name = 'expense/expense_list.html'
+
+    def get(self, request, *args, **kwargs):
+        expenses = Expense.objects.filter(is_deleted=False)
+
+        total_expense_amount = expenses.aggregate(total_amount=Sum('amount'))['total_amount']
+
+        context = {'expenses': expenses, 'total_expense': total_expense_amount}
+        return render(request, self.template_name, context)
+
+class ExpenseUpdateView(UpdateView):
+    model = Expense
+    form_class = ExpenseForm
+    # fields = ['title', 'amount', 'date', 'notes']
+    template_name = 'expense/expense_update.html'  # Template for updating expense
+    success_url = reverse_lazy('expense-list')
+
+from django.http import HttpResponseRedirect
+from django.urls import reverse
+from django.views.generic import DeleteView
+from .models import Expense
+
+class ExpenseDeleteView(DeleteView):
+    model = Expense
+    success_url = '/expense-list/'  # Redirect URL after deletion
+
+    def delete(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        success_url = self.get_success_url()
+        self.object.delete()
+        return HttpResponseRedirect(success_url)
+
+    
+
+

@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h1>Your Expenses</h1>
+    <!-- <div class="mb-3">
+        <a href="{% url 'expense-create' %}" class="btn btn-primary">Add Expense</a>
+    </div> -->
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>Date</th>
+                <th>Title</th>
+                <th>Amount</th>
+                <th>Note</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for expense in expenses %}
+                <tr>
+                    <td>{{ expense.date }}</td>
+                    <td>{{ expense.title }}</td>
+                    <td>{{ expense.amount }}</td>
+                    <td>{{ expense.notes }}</td>
+                    <td>
+                        <a href="{% url 'update_expense' expense.id %}" class="btn btn-sm btn-info">Update</a>
+                        <button onclick="confirmDelete('{{ expense.id }}')" class="btn btn-sm btn-danger">Delete</button>
+                    </td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="2"><strong>Total</strong></td>
+                <td colspan="3">{{ total_expense }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>Dear {{request.user}}. Your expense is {{total_expense}}</p>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+    function confirmDelete(expenseId) {
+        if (confirm("Are you sure you want to delete this expense?")) {
+            axios.delete(`/api/expenses/${expenseId}/`, {
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                }
+            }).then(response => {
+                window.location.reload();
+            }).catch(error => {
+                alert("An error occurred while deleting the expense.");
+            });
+        }
+    }
+</script>
+{% endblock %}
