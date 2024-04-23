@@ -10,6 +10,13 @@
                 <input type="text" name="title[]" class="form-control mb-2" placeholder="Title" required>
                 <input type="text" name="amount[]" class="form-control mb-2" placeholder="Amount" required>
                 <input type="date" name="date[]" class="form-control mb-2" placeholder="Date" required>
+                <select name="category[]" class="form-control mb-2">
+                    <option value="" disabled selected>Select Category</option>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.title }}</option>
+                    {% endfor %}
+                </select>
+                
                 <input type="text" name="note[]" class="form-control mb-2" placeholder="Notes">
                 <!-- Add more fields as needed -->
                 <button type="button" class="btn btn-danger remove-expense">Remove</button>
@@ -30,6 +37,12 @@
                 <input type="text" name="title[]" class="form-control mb-2" placeholder="Title">
                 <input type="text" name="amount[]" class="form-control mb-2" placeholder="Amount">
                 <input type="date" name="date[]" class="form-control mb-2" placeholder="Date">
+                <select name="category[]" class="form-control mb-2">
+                    <option value="" disabled selected>Select Category</option>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.title }}</option>
+                    {% endfor %}
+                </select>                
                 <input type="text" name="note[]" class="form-control mb-2" placeholder="Notes">
                 <!-- Add more fields as needed -->
                 <button type="button" class="btn btn-danger remove-expense">Remove</button>

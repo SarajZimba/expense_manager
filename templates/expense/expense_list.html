@@ -2,7 +2,9 @@
 
 {% block content %}
 <div class="container">
-    <h1>Your Expenses</h1>
+    <h3>Your Expenses</h3>
+    <p>Dear {{request.user}}. Your total expense is {{total_expense}}</p>
+
     <!-- <div class="mb-3">
         <a href="{% url 'expense-create' %}" class="btn btn-primary">Add Expense</a>
     </div> -->
@@ -13,6 +15,7 @@
                 <th>Title</th>
                 <th>Amount</th>
                 <th>Note</th>
+                <th>Category</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -23,6 +26,7 @@
                     <td>{{ expense.title }}</td>
                     <td>{{ expense.amount }}</td>
                     <td>{{ expense.notes }}</td>
+                    <td>{{ expense.expense_category.title }}</td>
                     <td>
                         <a href="{% url 'update_expense' expense.id %}" class="btn btn-sm btn-info">Update</a>
                         <button onclick="confirmDelete('{{ expense.id }}')" class="btn btn-sm btn-danger">Delete</button>
@@ -36,7 +40,32 @@
         </tbody>
     </table>
 
-    <p>Dear {{request.user}}. Your expense is {{total_expense}}</p>
+<br><br>
+    <h4>Expenses by Category</h4>
+    <br>
+    <table class="table table-striped">
+        <thead class="thead-dark">
+            <tr>
+                <th>Title</th>
+                <th>Amount</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            {% for category_total in category_totals %}
+                <tr>
+                    <td>{{ category_total.expense_category__title }}</td>
+                    <td>{{ category_total.total_amount }}</td>
+
+                </tr>
+    
+            {% endfor %}
+            <tr>
+                <td colspan="1"><strong>Total</strong></td>
+                <td colspan="1">{{ total_expense }}</td>
+            </tr>
+        </tbody>
+    </table>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
